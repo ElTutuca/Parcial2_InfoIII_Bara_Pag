@@ -66,3 +66,35 @@ class Main {
 }
 
 */
+
+
+/*
+
+Buenos Aires: 6
+Córdoba: 14   
+Mendoza: 50   
+Formosa: 34   
+CABA: 2       
+Santa Fe: 82  
+San Luis: 74  
+Entre Ríos: 30
+Tucumán: 90   
+Chaco: 22
+Corrientes: 18
+Río Negro: 62
+Santa Cruz: 78
+Neuquén: 58
+San Juan: 70
+La Pampa: 42
+Chubut: 26
+Jujuy: 38
+Santiago del Estero: 86
+Catamarca: 10
+Tierra del Fuego: 94
+Misiones: 54
+La Rioja: 46
+Salta: 66
+
+
+
+*/

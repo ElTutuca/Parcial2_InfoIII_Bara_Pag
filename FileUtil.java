@@ -6,15 +6,19 @@ import java.util.function.Predicate;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 
+/* ToDo: Asegurar casos nulos */
+
 class FileUtil {
 
     public static GlobalStats readCases(String fileName) {
 
-        int deceasedCount = 0;
+       
         int samplesCount = 0;
         int infectedCount = 0;
-        int[] deceasedAge = new int[11];
+        int deceasedCount = 0;
+
         int[] infectedAge = new int[11];
+        int[] deceasedAge = new int[11];
 
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
@@ -90,6 +94,7 @@ class FileUtil {
 
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
+            int n = 1;
             String line;
             line = reader.readLine();
             while ((line = reader.readLine()) != null) {
@@ -99,9 +104,11 @@ class FileUtil {
                         values[i] = values[i].substring(1, values[i].length() - 1);
 
                 // Carga de TestSubjects
+                //System.out.println("N=" + n);
                 TestSubject t = loadTestSubject(values);
 
                 table.add(t);
+                n++;
             }
             reader.close();
         } catch (Exception e) {
@@ -116,7 +123,7 @@ class FileUtil {
         TestSubject t = new TestSubject();
         t.setIdEventoCaso(Integer.parseInt(values[0]));
         t.setSexo(values[1].charAt(0));
-        t.setEdad(Integer.parseInt(values[2]));
+        t.setEdad(values[2].equals("") ? -1:Integer.parseInt(values[2]));
         t.setEdadTipo(values[3].equalsIgnoreCase("Meses"));
         t.setResidenciaPais(values[4]);
         t.setResidenciaProvincia(values[5]);
@@ -126,43 +133,38 @@ class FileUtil {
         try {
             t.setFechaInicioSintomas(formatDate.parse(values[8]));
         } catch (ParseException ex) {
-            System.out.println("Invalid Dates");
+            //System.out.println("Invalid Dates");
         }
 
         try {
             t.setFechaApertura(formatDate.parse(values[9]));
         } catch (ParseException ex) {
-            System.out.println("Invalid Dates");
+           // System.out.println("Invalid Dates");
         }
 
         try {
             t.setFechaInternacion(formatDate.parse(values[11]));
-        } catch (ParseException ex) {
-            System.out.println("Invalid Dates");
-        }
-
-        try {
             t.setFechaCuidadoIntensivo(formatDate.parse(values[13]));
         } catch (ParseException ex) {
-            System.out.println("Invalid Dates");
+            //System.out.println("Invalid Dates");
         }
 
         try {
             t.setFechaFallecimiento(formatDate.parse(values[15]));
         } catch (ParseException ex) {
-            System.out.println("Invalid Dates");
+            //System.out.println("Invalid Dates");
         }
 
         try {
             t.setFechaDiagnostico(formatDate.parse(values[22]));
         } catch (ParseException ex) {
-            System.out.println("Invalid Dates");
+            //System.out.println("Invalid Dates");
         }
 
         try {
             t.setUltimaActualizacion(formatDate.parse(values[24]));
         } catch (ParseException ex) {
-            System.out.println("Invalid Dates");
+            //System.out.println("Invalid Dates");
         }
 
         t.setSepiApertura(values[10]);
