@@ -1,3 +1,4 @@
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,16 +11,16 @@ import java.text.ParseException;
 
 class FileUtil {
 
-    public static GlobalStats readCases(String fileName) {
+    GlobalStats stats = new GlobalStats();
 
-       
-        int samplesCount = 0;
-        int infectedCount = 0;
-        int deceasedCount = 0;
 
-        int[] infectedAge = new int[11];
-        int[] deceasedAge = new int[11];
+    public void readCases(String fileName, int n, boolean estad, boolean another) {
+    //public <TypeKey extends Comparable> HashTableOpen<TypeKey, TestSubject> readCases(String fileName, int n,
+       //                                                                                      Function<TestSubject, TypeKey> getKey, Predicate<TestSubject> isAprobado, boolean estad, boolean another) {
 
+
+       // HashTableOpen<TypeKey, TestSubject> table = new HashTableOpen<TypeKey, TestSubject>(n);
+        
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
             String line;
@@ -27,94 +28,55 @@ class FileUtil {
             while ((line = reader.readLine()) != null) {
                 String[] values = line.split(",");
 
-                values[14] = values[14].substring(1, values[14].length() - 1);
-                values[20] = values[20].substring(1, values[20].length() - 1);
-                values[2] = values[2].substring(1, values[2].length() - 1);
-                values[3] = values[3].substring(1, values[3].length() - 1);
+                if(another){
+                    for (int i = 0; i < values.length; i++)
+                        if (values[i].length() > 1)
+                            values[i] = values[i].substring(1, values[i].length() - 1);
 
-                if ((values[14]).equalsIgnoreCase("SI")) {
-                    deceasedCount++;
-                    if ((values[3].equalsIgnoreCase("Años"))) {
-                        deceasedAge[(Integer.parseInt(values[2]) - 1) / 10]++;
+                    // Carga de TestSubjects
+                    TestSubject t = loadTestSubject(values);
 
-                    } else
-                        deceasedAge[0]++;
+                    //if (isAprobado.test(t))
+                       // table.insert(getKey.apply(t), t);
                 }
 
-                if ((values[20]).equalsIgnoreCase("Confirmado")) {
-                    infectedCount++;
-                    if ((values[3].equalsIgnoreCase("Años"))) {
-                        infectedAge[(Integer.parseInt(values[2]) - 1) / 10]++;
+                if(estad) {
 
-                    } else
-                        infectedAge[0]++;
+                    values[14] = values[14].substring(1, values[14].length() - 1);
+                    values[20] = values[20].substring(1, values[20].length() - 1);
+                    values[2] = values[2].substring(1, values[2].length() - 1);
+                    values[3] = values[3].substring(1, values[3].length() - 1);
+
+
+
+                    if ((values[14]).equalsIgnoreCase("SI")) {
+                        stats.increaseDeceased();
+                        if ((values[3].equalsIgnoreCase("Años"))) {
+                            if(!values[2].equals(""))
+                                stats.increasedeceasedAge((Integer.parseInt(values[2]) - 1) / 10);
+
+                        } else
+                            stats.increasedeceasedAge(0);
+                    }
+
+                    if ((values[20]).equalsIgnoreCase("Confirmado")) {
+                        stats.increaseInfected();
+                        if ((values[3].equalsIgnoreCase("Años"))) {
+                            if(!values[2].equals(""))
+                                stats.increaseinfectedAge((Integer.parseInt(values[2]) - 1) / 10);
+                        } else
+                        stats.increaseinfectedAge(0);
+                    }
+                    stats.increaseSamples();
                 }
 
-                samplesCount++;
 
             }
             reader.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        GlobalStats stats = new GlobalStats(samplesCount, infectedCount, deceasedCount, infectedAge, deceasedAge);
-        return stats;
-    }
-
-    public static <TypeKey extends Comparable> HashTableOpen<TypeKey, TestSubject> readCases(String fileName, int n,
-            Function<TestSubject, TypeKey> getKey, Predicate<TestSubject> isAprobado) {
-
-        HashTableOpen<TypeKey, TestSubject> table = new HashTableOpen<TypeKey, TestSubject>(n);
-
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(fileName));
-            String line;
-            line = reader.readLine();
-            while ((line = reader.readLine()) != null) {
-                String[] values = line.split(",");
-                for (int i = 0; i < values.length; i++)
-                    if (values[i].length() > 1)
-                        values[i] = values[i].substring(1, values[i].length() - 1);
-
-                // Carga de TestSubjects
-                TestSubject t = loadTestSubject(values);
-
-                if (isAprobado.test(t))
-                    table.insert(getKey.apply(t), t);
-            }
-            reader.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return table;
-    }
-
-    public static List<TestSubject> readCasesList(String fileName) {
-        List<TestSubject> table = new ArrayList<>();
-
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(fileName));
-            int n = 1;
-            String line;
-            line = reader.readLine();
-            while ((line = reader.readLine()) != null) {
-                String[] values = line.split(",");
-                for (int i = 0; i < values.length; i++)
-                    if (values[i].length() > 1)
-                        values[i] = values[i].substring(1, values[i].length() - 1);
-
-                // Carga de TestSubjects
-                //System.out.println("N=" + n);
-                TestSubject t = loadTestSubject(values);
-
-                table.add(t);
-                n++;
-            }
-            reader.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return table;
+        //return table;
     }
 
     private static TestSubject loadTestSubject(String[] values) {
@@ -139,7 +101,7 @@ class FileUtil {
         try {
             t.setFechaApertura(formatDate.parse(values[9]));
         } catch (ParseException ex) {
-           // System.out.println("Invalid Dates");
+            // System.out.println("Invalid Dates");
         }
 
         try {
@@ -178,6 +140,22 @@ class FileUtil {
         t.setResidenciaProvinciaId(Integer.parseInt(values[21]));
         t.setResidenciaDepartamentoId(Integer.parseInt(values[23]));
 
+
+
+
         return t;
     }
+
+    public GlobalStats getStats(){
+        return stats;
+    }
+
+   
+
+    /*public <TypeKey extends Comparable> HashTableOpen<TypeKey, TestSubject> getTable() {
+
+    }*/
+
+
+
 }

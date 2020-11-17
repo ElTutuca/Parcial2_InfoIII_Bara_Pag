@@ -1,10 +1,17 @@
+import java.util.Arrays;
+
 public class GlobalStats {
 
-    private int samples;
-    private int infected;
-    private int deceased;
+    private int samples = 0;
+    private int infected = 0;
+    private int deceased = 0;
     private int[] infectedAge = new int[11];
     private int[] deceasedAge = new int[11];
+
+    GlobalStats() {
+        Arrays.fill(infectedAge, 0);
+        Arrays.fill(deceasedAge, 0);
+    }
 
     GlobalStats(int samples, int infected, int deceased, int[] infectedAge, int[] deceasedAge) {
         this.deceased = deceased;
@@ -21,6 +28,26 @@ public class GlobalStats {
 
     public int InfectedDeceasedPercent() {
         return (deceased * 100) / infected;
+    }
+
+    public void increaseSamples() {
+        samples++;
+    }
+
+    public void increaseInfected() {
+        infected++;
+    }
+
+    public void increaseDeceased() {
+        deceased++;
+    }
+
+    public void increaseinfectedAge(int i) {
+        infectedAge[i]++;
+    }
+
+    public void increasedeceasedAge(int i) {
+        deceasedAge[i]++;
     }
 
     public void ShowStats() {

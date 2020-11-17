@@ -2,8 +2,10 @@
 public class HashTableOpen<TypeKey extends Comparable, TypeValue> {
     AvlTree<HashEntry<TypeKey, TypeValue>>[] table;
 
+    private int size = 0;
 
     public HashTableOpen(int size) {
+        this.size = size;
         this.table = new AvlTree[size];
         for (int i = 0; i < table.length; i++) {
             table[i] = new AvlTree<>();
@@ -16,6 +18,8 @@ public class HashTableOpen<TypeKey extends Comparable, TypeValue> {
 
     public void insert(TypeKey clave, TypeValue value) throws Exception {
         int pos = hashFunc(clave);
+        int i=0;
+        
         table[pos].insert(new HashEntry<>(clave, value));
     }
 
