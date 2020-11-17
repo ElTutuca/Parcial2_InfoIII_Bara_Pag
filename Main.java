@@ -1,9 +1,13 @@
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Hashtable;
 import java.text.ParseException;
 
 class Main {
@@ -91,17 +95,36 @@ class Main {
 				} // Sin parametro
 				break;
 			case "-casos_cui":
-				if (args.length > 1) { // Parametro enviado
-					try {
-						SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd");
-						Date fecha = formatDate.parse(args[1]);
+				try {
+					SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd");
+					Date fecha = null;
+					if (args.length > 1)
+						fecha = formatDate.parse(args[1]);
 
-					} catch (ParseException ex) {
-						System.out.println("Argumento \"" + args[1] + "\" no valido.");
+					TreeMap<Date, List<TestSubject>> tm = file.readCasesCui(fileName, fecha, hayEstad);
+
+					if (hayEstad) {
+						System.out.println("ESTADISTICO");
+						file.getStats().ShowStats();
 					}
-				} else {
 
-				} // Sin parametro
+					boolean found = false;
+					for (Map.Entry<Date, List<TestSubject>> e : tm.entrySet()) {
+						found = true;
+						System.out.println(formatDate.format(e.getKey()));
+
+						// ? Ver si imprimimos todo el caso o ni
+						e.getValue().forEach(x -> System.out
+								.println(formatDate.format(x.getFechaCuidadoIntensivo()) + ", " + x.getIdEventoCaso()));
+
+						System.out.println();
+					}
+					if (!found)
+						System.out.println("No se encontro casos con la fecha \"" + fecha + "\"");
+
+				} catch (ParseException ex) {
+					System.out.println("Argumento \"" + args[1] + "\" no valido.");
+				}
 				break;
 		}
 
