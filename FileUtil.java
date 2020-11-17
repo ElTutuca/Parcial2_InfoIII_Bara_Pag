@@ -14,8 +14,8 @@ class FileUtil {
 
     GlobalStats stats = new GlobalStats();
 
-    public TreeMap<String, Map<Integer, List<TestSubject>>> readCasesByAge(String fileName) {
-        TreeMap<String, Map<Integer, List<TestSubject>>> casesByAge = new TreeMap<>();
+    public TreeMap<String, List<TestSubject>> readCasesByAge(String fileName, int edad, boolean hayEstad) {
+        TreeMap<String, List<TestSubject>> casesByAge = new TreeMap<>();
 
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
@@ -28,26 +28,21 @@ class FileUtil {
                     if (values[i].length() > 1)
                         values[i] = values[i].substring(1, values[i].length() - 1);
 
+                if (hayEstad)
+                    loadStats(values);
+
                 // Carga de TestSubjects
                 TestSubject t = loadTestSubject(values);
+                if (!t.getClasificacionResumen().equalsIgnoreCase("Confirmado") || t.getEdad() != edad)
+                    continue;
 
                 if (casesByAge.containsKey(t.getCargaProvincia())) {
-                    if (casesByAge.get(t.getCargaProvincia()).containsKey(t.getEdad()))
-                        casesByAge.get(t.getCargaProvincia()).get(t.getEdad()).add(t);
-                    else {
-                        List<TestSubject> ls = new ArrayList<>();
-                        ls.add(t);
-
-                        casesByAge.get(t.getCargaProvincia()).put(t.getEdad(), ls);
-                    }
+                    casesByAge.get(t.getCargaProvincia()).add(t);
                 } else {
                     List<TestSubject> ts = new ArrayList<>();
                     ts.add(t);
 
-                    Map<Integer, List<TestSubject>> mp = new HashMap<>();
-                    mp.put(t.getEdad(), ts);
-
-                    casesByAge.put(t.getCargaProvincia(), mp);
+                    casesByAge.put(t.getCargaProvincia(), ts);
                 }
             }
             reader.close();
@@ -86,31 +81,7 @@ class FileUtil {
                 }
 
                 if (estad) {
-
-                    values[14] = values[14].substring(1, values[14].length() - 1);
-                    values[20] = values[20].substring(1, values[20].length() - 1);
-                    values[2] = values[2].substring(1, values[2].length() - 1);
-                    values[3] = values[3].substring(1, values[3].length() - 1);
-
-                    if ((values[14]).equalsIgnoreCase("SI")) {
-                        stats.increaseDeceased();
-                        if ((values[3].equalsIgnoreCase("Años"))) {
-                            if (!values[2].equals(""))
-                                stats.increasedeceasedAge((Integer.parseInt(values[2]) - 1) / 10);
-
-                        } else
-                            stats.increasedeceasedAge(0);
-                    }
-
-                    if ((values[20]).equalsIgnoreCase("Confirmado")) {
-                        stats.increaseInfected();
-                        if ((values[3].equalsIgnoreCase("Años"))) {
-                            if (!values[2].equals(""))
-                                stats.increaseinfectedAge((Integer.parseInt(values[2]) - 1) / 10);
-                        } else
-                            stats.increaseinfectedAge(0);
-                    }
-                    stats.increaseSamples();
+                    loadStats(values);
                 }
 
             }
@@ -183,6 +154,34 @@ class FileUtil {
         t.setResidenciaDepartamentoId(Integer.parseInt(values[23]));
 
         return t;
+
+    }
+
+    private void loadStats(String[] values) {
+        values[14] = values[14].substring(1, values[14].length() - 1);
+        values[20] = values[20].substring(1, values[20].length() - 1);
+        values[2] = values[2].substring(1, values[2].length() - 1);
+        values[3] = values[3].substring(1, values[3].length() - 1);
+
+        if ((values[14]).equalsIgnoreCase("SI")) {
+            stats.increaseDeceased();
+            if ((values[3].equalsIgnoreCase("Años"))) {
+                if (!values[2].equals(""))
+                    stats.increasedeceasedAge((Integer.parseInt(values[2]) - 1) / 10);
+
+            } else
+                stats.increasedeceasedAge(0);
+        }
+
+        if ((values[20]).equalsIgnoreCase("Confirmado")) {
+            stats.increaseInfected();
+            if ((values[3].equalsIgnoreCase("Años"))) {
+                if (!values[2].equals(""))
+                    stats.increaseinfectedAge((Integer.parseInt(values[2]) - 1) / 10);
+            } else
+                stats.increaseinfectedAge(0);
+        }
+        stats.increaseSamples();
     }
 
     public GlobalStats getStats() {

@@ -1,8 +1,6 @@
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.Arrays;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,20 +11,14 @@ class Main {
 	public static void main(String[] args) {
 
 		FileUtil file = new FileUtil();
-		String fileName = "Covid19Casos-10.csv";// Nombre del archivo
+		String fileName = "Covid19Casos.csv";// Nombre del archivo
 
 		GlobalStats gs;
 
 		boolean hayEstad = Arrays.stream(args).anyMatch(arg -> arg.equals("-estad"));
 
-		if (hayEstad) {
-			if (args.length < 2) {
-				file.readCases(fileName, 0, true, false);
-				System.out.println("\n\n\nESTADISTICAS:\n");
-				file.getStats().ShowStats();
-			}
+		if (hayEstad)
 			Arrays.stream(args).filter(arg -> !arg.equalsIgnoreCase("-estad"));
-		}
 
 		// TODO: Si pinta arreglar la sig. situacion // covid19.jar -p_casos -estad 5
 		// TODO: Me parece, que es ineficiente tener un metodo solo para el -estad y
@@ -71,20 +63,26 @@ class Main {
 				if (args.length > 1) { // Parametro enviado
 					try {
 						int n = Integer.parseInt(args[1]);
-						TreeMap<String, Map<Integer, List<TestSubject>>> tm = file.readCasesByAge(fileName);
-						boolean found = false;
-						for (Map.Entry<String, Map<Integer, List<TestSubject>>> e : tm.entrySet()) {
-							if (!e.getValue().containsKey(n))
-								continue;
-							found = true;
+						TreeMap<String, List<TestSubject>> tm = file.readCasesByAge(fileName, n, hayEstad);
 
+						if (hayEstad) {
+							System.out.println("ESTADISTICO");
+							file.getStats().ShowStats();
+						}
+
+						boolean found = false;
+						for (Map.Entry<String, List<TestSubject>> e : tm.entrySet()) {
+							found = true;
 							System.out.println(e.getKey());
 
-							e.getValue().get(n).forEach(x -> System.out.println(
+							// ? Ver si imprimimos todo el caso o ni
+							e.getValue().forEach(x -> System.out.println(
 									x.getIdEventoCaso() + ", " + x.getCargaProvinciaId() + ", " + x.getEdad()));
+
+							System.out.println();
 						}
 						if (!found)
-							System.out.println("No se encontro la edad \"" + n + "\"");
+							System.out.println("No se encontro casos con la edad \"" + n + "\"");
 					} catch (Exception e) {
 						System.out.println("Argumento \"" + args[1] + "\" no valido.");
 					}
@@ -108,10 +106,8 @@ class Main {
 		}
 
 	}
+
 }
-// HashTableOpen<Integer, String> tableHash = new HashTableOpen<Integer,
-// String>(10);
-// Map<String, Integer> provMuertes = new Map<String, Integer>();
 
 /*
  * List<String> provincias = Arrays.asList("Buenos Aires", "Córdoba", "Mendoza",
