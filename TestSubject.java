@@ -236,34 +236,19 @@ public class TestSubject {
 
     @Override
     public String toString() {
-        return "TestSubject{" +
-                "idEventoCaso=" + idEventoCaso +
-                ", sexo=" + sexo +
-                ", edad=" + edad +
-                ", edadTipo=" + edadTipo +
-                ", residenciaPais='" + residenciaPais + '\'' +
-                ", residenciaProvincia='" + residenciaProvincia + '\'' +
-                ", residenciaDepartamento='" + residenciaDepartamento + '\'' +
-                ", cargaProvincia='" + cargaProvincia + '\'' +
-                ", fechaInicioSintomas=" + fechaInicioSintomas +
-                ", fechaApertura=" + fechaApertura +
-                ", sepiApertura='" + sepiApertura + '\'' +
-                ", fechaInternacion=" + fechaInternacion +
-                ", cuidadoIntensivo=" + cuidadoIntensivo +
-                ", fechaCuidadoIntensivo=" + fechaCuidadoIntensivo +
-                ", fallecido=" + fallecido +
-                ", fechaFallecimiento=" + fechaFallecimiento +
-                ", asistenciaRespiratoriaMecanica=" + asistenciaRespiratoriaMecanica +
-                ", cargaProvinciaId=" + cargaProvinciaId +
-                ", origenFinanciamiento=" + origenFinanciamiento +
-                ", clasificacion='" + clasificacion + '\'' +
-                ", clasificacionResumen='" + clasificacionResumen + '\'' +
-                ", residenciaProvinciaId=" + residenciaProvinciaId +
-                ", fechaDiagnostico=" + fechaDiagnostico +
-                ", residenciaDepartamentoId=" + residenciaDepartamentoId +
-                ", ultimaActualizacion=" + ultimaActualizacion +
-                '}';
+        return "TestSubject{" + "idEventoCaso=" + idEventoCaso + ", sexo=" + sexo + ", edad=" + edad + ", edadTipo="
+                + edadTipo + ", residenciaPais='" + residenciaPais + '\'' + ", residenciaProvincia='"
+                + residenciaProvincia + '\'' + ", residenciaDepartamento='" + residenciaDepartamento + '\''
+                + ", cargaProvincia='" + cargaProvincia + '\'' + ", fechaInicioSintomas=" + fechaInicioSintomas
+                + ", fechaApertura=" + fechaApertura + ", sepiApertura='" + sepiApertura + '\'' + ", fechaInternacion="
+                + fechaInternacion + ", cuidadoIntensivo=" + cuidadoIntensivo + ", fechaCuidadoIntensivo="
+                + fechaCuidadoIntensivo + ", fallecido=" + fallecido + ", fechaFallecimiento=" + fechaFallecimiento
+                + ", asistenciaRespiratoriaMecanica=" + asistenciaRespiratoriaMecanica + ", cargaProvinciaId="
+                + cargaProvinciaId + ", origenFinanciamiento=" + origenFinanciamiento + ", clasificacion='"
+                + clasificacion + '\'' + ", clasificacionResumen='" + clasificacionResumen + '\''
+                + ", residenciaProvinciaId=" + residenciaProvinciaId + ", fechaDiagnostico=" + fechaDiagnostico
+                + ", residenciaDepartamentoId=" + residenciaDepartamentoId + ", ultimaActualizacion="
+                + ultimaActualizacion + '}';
     }
-
 
 }

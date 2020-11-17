@@ -1,5 +1,6 @@
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.Arrays;
@@ -14,35 +15,31 @@ class Main {
 		FileUtil file = new FileUtil();
 		String fileName = "Covid19Casos-10.csv";// Nombre del archivo
 
-
 		GlobalStats gs;
 
 		boolean hayEstad = Arrays.stream(args).anyMatch(arg -> arg.equals("-estad"));
-		// boolean estadistica = Arrays.asList(args).contains("-estad");
 
-		//if (hayEstad) {
-
-			if(args.length < 2){
-				file.readCases(fileName,0,true,false);
-				gs=file.getStats();
+		if (hayEstad) {
+			if (args.length < 2) {
+				file.readCases(fileName, 0, true, false);
 				System.out.println("\n\n\nESTADISTICAS:\n");
-				gs.ShowStats();
+				file.getStats().ShowStats();
 			}
-				Arrays.stream(args).filter(arg -> !arg.equalsIgnoreCase("-estad"));
-
-
-			//FileUtil.readCases(fileName).ShowStats();
-		//}
+			Arrays.stream(args).filter(arg -> !arg.equalsIgnoreCase("-estad"));
+		}
 
 		// TODO: Si pinta arreglar la sig. situacion // covid19.jar -p_casos -estad 5
-		// TODO: Me parece, que es ineficiente tener un metodo solo para el -estad y otro para otra plabra clave. Si piden las dos cosas, va a tener que leer el archivo dos veces.
-		// TODO: Para solucionar lo de arriba, podríamos hacer en la lectura del archivo banderas para ir activando cuando corresponda.
+		// TODO: Me parece, que es ineficiente tener un metodo solo para el -estad y
+		// otro para otra plabra clave. Si piden las dos cosas, va a tener que leer el
+		// archivo dos veces.
+		// TODO: Para solucionar lo de arriba, podríamos hacer en la lectura del archivo
+		// banderas para ir activando cuando corresponda.
 		// covid19.jar -p_casos 5 6
 
 		if (args.length == 0) {
 			System.out.println("Sin argumentos");
 			return;
-		} else if (args.length < 3) {
+		} else if (args.length > 2) {
 			System.out.println("Exceso de argumentos");
 			return;
 		}
@@ -74,11 +71,25 @@ class Main {
 				if (args.length > 1) { // Parametro enviado
 					try {
 						int n = Integer.parseInt(args[1]);
+						TreeMap<String, Map<Integer, List<TestSubject>>> tm = file.readCasesByAge(fileName);
+						boolean found = false;
+						for (Map.Entry<String, Map<Integer, List<TestSubject>>> e : tm.entrySet()) {
+							if (!e.getValue().containsKey(n))
+								continue;
+							found = true;
+
+							System.out.println(e.getKey());
+
+							e.getValue().get(n).forEach(x -> System.out.println(
+									x.getIdEventoCaso() + ", " + x.getCargaProvinciaId() + ", " + x.getEdad()));
+						}
+						if (!found)
+							System.out.println("No se encontro la edad \"" + n + "\"");
 					} catch (Exception e) {
 						System.out.println("Argumento \"" + args[1] + "\" no valido.");
 					}
 				} else {
-
+					System.out.println("Debe pasar una edad.");
 				} // Sin parametro
 				break;
 			case "-casos_cui":
@@ -86,7 +97,7 @@ class Main {
 					try {
 						SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd");
 						Date fecha = formatDate.parse(args[1]);
-						
+
 					} catch (ParseException ex) {
 						System.out.println("Argumento \"" + args[1] + "\" no valido.");
 					}
