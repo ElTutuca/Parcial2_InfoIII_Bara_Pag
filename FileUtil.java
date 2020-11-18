@@ -1,17 +1,16 @@
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Hashtable;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
-
-import java.text.SimpleDateFormat;
-import java.text.ParseException;
+import java.util.function.Predicate;
 
 /* ToDo: Asegurar casos nulos */
 
@@ -119,14 +118,13 @@ class FileUtil {
 
     }
 
-    public void readCases(String fileName, int n, boolean estad, boolean another) {
-        // public <TypeKey extends Comparable> HashTableOpen<TypeKey, TestSubject>
-        // readCases(String fileName, int n,
-        // Function<TestSubject, TypeKey> getKey, Predicate<TestSubject> isAprobado,
-        // boolean estad, boolean another) {
-
-        // HashTableOpen<TypeKey, TestSubject> table = new HashTableOpen<TypeKey,
-        // TestSubject>(n);
+    public TreeMap<Date, List<TestSubject>> readCasesCui(String fileName, Date fecha, boolean hayEstad) {
+        TreeMap<Date, List<TestSubject>> casesCui = new TreeMap<>();
+        Predicate<Date> isFechaBien;
+        if (fecha != null)
+            isFechaBien = x -> x.compareTo(fecha) >= 0;
+        else
+            isFechaBien = x -> true;
 
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
@@ -135,28 +133,34 @@ class FileUtil {
             while ((line = reader.readLine()) != null) {
                 String[] values = line.split(",");
 
-                if (another) {
-                    for (int i = 0; i < values.length; i++)
-                        if (values[i].length() > 1)
-                            values[i] = values[i].substring(1, values[i].length() - 1);
+                for (int i = 0; i < values.length; i++)
+                    if (values[i].length() > 1)
+                        values[i] = values[i].substring(1, values[i].length() - 1);
 
-                    // Carga de TestSubjects
-                    TestSubject t = loadTestSubject(values);
-
-                    // if (isAprobado.test(t))
-                    // table.insert(getKey.apply(t), t);
-                }
-
-                if (estad) {
+                if (hayEstad)
                     loadStats(values);
-                }
 
+                // Carga de TestSubjects
+                TestSubject t = loadTestSubject(values);
+                if (t.getFechaCuidadoIntensivo() == null)
+                    continue;
+                if (!t.isCuidadoIntensivo() || !isFechaBien.test(t.getFechaCuidadoIntensivo()))
+                    continue;
+
+                if (casesCui.containsKey(t.getFechaCuidadoIntensivo())) {
+                    casesCui.get(t.getFechaCuidadoIntensivo()).add(t);
+                } else {
+                    List<TestSubject> ts = new ArrayList<>();
+                    ts.add(t);
+
+                    casesCui.put(t.getFechaCuidadoIntensivo(), ts);
+                }
             }
             reader.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // return table;
+        return casesCui;
     }
 
     // ****Lectura de solo estadísticas****//
@@ -239,7 +243,6 @@ class FileUtil {
         t.setResidenciaDepartamentoId(Integer.parseInt(values[23]));
 
         return t;
-
     }
 
     // ****Carga de estadísticas****//

@@ -1,11 +1,11 @@
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.Arrays;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.text.ParseException;
 
 // TODO: Si pinta arreglar la sig. situacion // covid19.jar -p_casos -estad 5
 // covid19.jar -p_casos 5 6
@@ -111,18 +111,36 @@ class Main {
 				break;
 
 			case "-casos_cui":
-				if (args.length > 1) { // Parametro enviado
-					try {
-						SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd");
-						Date fecha = formatDate.parse(args[1]);
-					} catch (ParseException ex) {
-						System.out.println("Argumento \"" + args[1] + "\" no valido.");
+				try {
+					SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd");
+					Date fecha = null;
+					if (args.length > 1)
+						fecha = formatDate.parse(args[1]);
+
+					TreeMap<Date, List<TestSubject>> tm = file.readCasesCui(fileName, fecha, hayEstad);
+
+					if (hayEstad) {
+						System.out.println("ESTADISTICO");
+						file.getStats().ShowStats();
 					}
 
-				} else {
+					boolean found = false;
+					for (Map.Entry<Date, List<TestSubject>> e : tm.entrySet()) {
+						found = true;
+						System.out.println(formatDate.format(e.getKey()));
 
-				} // Sin parametro
+						// ? Ver si imprimimos todo el caso o ni
+						e.getValue().forEach(x -> System.out
+								.println(formatDate.format(x.getFechaCuidadoIntensivo()) + ", " + x.getIdEventoCaso()));
 
+						System.out.println();
+					}
+					if (!found)
+						System.out.println("No se encontro casos con la fecha \"" + fecha + "\"");
+
+				} catch (ParseException ex) {
+					System.out.println("Argumento \"" + args[1] + "\" no valido.");
+				}
 				break;
 
 			default:
