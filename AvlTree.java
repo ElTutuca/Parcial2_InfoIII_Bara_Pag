@@ -17,8 +17,8 @@
 // Throws UnderflowException as appropriate
 
 /**
- * Implements an AVL tree.
- * Note that all "matching" is based on the compareTo method.
+ * Implements an AVL tree. Note that all "matching" is based on the compareTo
+ * method.
  *
  * @author Mark Allen Weiss
  */
@@ -48,7 +48,6 @@ public class AvlTree<AnyType extends Comparable<? super AnyType>> {
         root = remove(x, root);
     }
 
-
     /**
      * Internal method to remove from a subtree.
      *
@@ -58,7 +57,7 @@ public class AvlTree<AnyType extends Comparable<? super AnyType>> {
      */
     private AvlNode<AnyType> remove(AnyType x, AvlNode<AnyType> t) {
         if (t == null)
-            return t;   // Item not found; do nothing
+            return t; // Item not found; do nothing
 
         int compareResult = x.compareTo(t.data);
 
@@ -123,7 +122,6 @@ public class AvlTree<AnyType extends Comparable<? super AnyType>> {
         return root == null;
     }
 
-
     private static final int ALLOWED_IMBALANCE = 1;
 
     // Assume t is either balanced or within one of being balanced
@@ -157,14 +155,12 @@ public class AvlTree<AnyType extends Comparable<? super AnyType>> {
         if (t != null) {
             int hl = checkBalance(t.left);
             int hr = checkBalance(t.right);
-            if (Math.abs(height(t.left) - height(t.right)) > 1 ||
-                    height(t.left) != hl || height(t.right) != hr)
+            if (Math.abs(height(t.left) - height(t.right)) > 1 || height(t.left) != hl || height(t.right) != hr)
                 System.out.println("OOPS!!");
         }
 
         return height(t);
     }
-
 
     /**
      * Internal method to insert into a subtree.
@@ -184,7 +180,7 @@ public class AvlTree<AnyType extends Comparable<? super AnyType>> {
         else if (compareResult > 0)
             t.right = insert(x, t.right);
         else
-            ;  // Duplicate; do nothing
+            ; // Duplicate; do nothing
         return balance(t);
     }
 
@@ -234,17 +230,15 @@ public class AvlTree<AnyType extends Comparable<? super AnyType>> {
             else if (compareResult > 0)
                 t = t.right;
             else
-                return true;    // Match
+                return true; // Match
         }
 
-        return false;   // No match
+        return false; // No match
     }
-
 
     public AnyType get(AnyType x) throws Exception {
         return get(x, root);
     }
-
 
     /**
      * Internal method to find an item in a subtree.
@@ -268,7 +262,6 @@ public class AvlTree<AnyType extends Comparable<? super AnyType>> {
         throw new Exception("404");
     }
 
-
     /**
      * Return the height of node t, or -1, if null.
      */
@@ -277,9 +270,8 @@ public class AvlTree<AnyType extends Comparable<? super AnyType>> {
     }
 
     /**
-     * Rotate binary tree node with left child.
-     * For AVL trees, this is a single rotation for case 1.
-     * Update heights, then return new root.
+     * Rotate binary tree node with left child. For AVL trees, this is a single
+     * rotation for case 1. Update heights, then return new root.
      */
     private AvlNode<AnyType> rotateWithLeftChild(AvlNode<AnyType> k2) {
         AvlNode<AnyType> k1 = k2.left;
@@ -291,9 +283,8 @@ public class AvlTree<AnyType extends Comparable<? super AnyType>> {
     }
 
     /**
-     * Rotate binary tree node with right child.
-     * For AVL trees, this is a single rotation for case 4.
-     * Update heights, then return new root.
+     * Rotate binary tree node with right child. For AVL trees, this is a single
+     * rotation for case 4. Update heights, then return new root.
      */
     private AvlNode<AnyType> rotateWithRightChild(AvlNode<AnyType> k1) {
         AvlNode<AnyType> k2 = k1.right;
@@ -305,10 +296,9 @@ public class AvlTree<AnyType extends Comparable<? super AnyType>> {
     }
 
     /**
-     * Double rotate binary tree node: first left child
-     * with its right child; then node k3 with new left child.
-     * For AVL trees, this is a double rotation for case 2.
-     * Update heights, then return new root.
+     * Double rotate binary tree node: first left child with its right child; then
+     * node k3 with new left child. For AVL trees, this is a double rotation for
+     * case 2. Update heights, then return new root.
      */
     private AvlNode<AnyType> doubleWithLeftChild(AvlNode<AnyType> k3) {
         k3.left = rotateWithRightChild(k3.left);
@@ -338,10 +328,9 @@ public class AvlTree<AnyType extends Comparable<? super AnyType>> {
     }
 
     /**
-     * Double rotate binary tree node: first right child
-     * with its left child; then node k1 with new right child.
-     * For AVL trees, this is a double rotation for case 3.
-     * Update heights, then return new root.
+     * Double rotate binary tree node: first right child with its left child; then
+     * node k1 with new right child. For AVL trees, this is a double rotation for
+     * case 3. Update heights, then return new root.
      */
     private AvlNode<AnyType> doubleWithRightChild(AvlNode<AnyType> k1) {
         k1.right = rotateWithLeftChild(k1.right);
@@ -361,17 +350,16 @@ public class AvlTree<AnyType extends Comparable<? super AnyType>> {
             height = 0;
         }
 
-        AnyType data;      // The data in the node
-        AvlNode<AnyType> left;         // Left child
-        AvlNode<AnyType> right;        // Right child
-        int height;       // Height
+        AnyType data; // The data in the node
+        AvlNode<AnyType> left; // Left child
+        AvlNode<AnyType> right; // Right child
+        int height; // Height
     }
 
     /**
      * The tree root.
      */
     private AvlNode<AnyType> root;
-
 
     // Test program
     public static void main(String[] args) {

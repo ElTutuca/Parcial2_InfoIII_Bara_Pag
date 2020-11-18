@@ -1,53 +1,71 @@
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.Arrays;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.text.ParseException;
 
+// TODO: Si pinta arreglar la sig. situacion // covid19.jar -p_casos -estad 5
+// covid19.jar -p_casos 5 6
 class Main {
 
 	public static void main(String[] args) {
 
+		long ti = System.nanoTime();
 		FileUtil file = new FileUtil();
 		String fileName = "Covid19Casos.csv";// Nombre del archivo
-
-		GlobalStats gs;
-
-		boolean hayEstad = Arrays.stream(args).anyMatch(arg -> arg.equals("-estad"));
-
-		if (hayEstad)
-			Arrays.stream(args).filter(arg -> !arg.equalsIgnoreCase("-estad"));
-
-		// TODO: Si pinta arreglar la sig. situacion // covid19.jar -p_casos -estad 5
-		// TODO: Me parece, que es ineficiente tener un metodo solo para el -estad y
-		// otro para otra plabra clave. Si piden las dos cosas, va a tener que leer el
-		// archivo dos veces.
-		// TODO: Para solucionar lo de arriba, podríamos hacer en la lectura del archivo
-		// banderas para ir activando cuando corresponda.
-		// covid19.jar -p_casos 5 6
 
 		if (args.length == 0) {
 			System.out.println("Sin argumentos");
 			return;
-		} else if (args.length > 2) {
+		} else if (args.length > 3) {
 			System.out.println("Exceso de argumentos");
 			return;
 		}
 
+		// *****Chequeo de -estad*****//
+
+		boolean hayEstad = Arrays.stream(args).anyMatch(arg -> arg.equals("-estad"));
+		if (hayEstad)
+			Arrays.stream(args).filter(arg -> !arg.equalsIgnoreCase("-estad"));
+
+		// *****Chequeo de el resto de comandos*****//
 		switch (args[0]) {
 			case "-p_casos":
+				TreeSet<List<TestSubject>> ts = file.readCasesByProvince(fileName, hayEstad);
+
+				if (hayEstad) {
+					System.out.println("ESTADISTICO");
+					file.getStats().ShowStats();
+				}
+
 				if (args.length > 1) { // Parametro enviado
 					try {
 						int n = Integer.parseInt(args[1]);
+						for (List<TestSubject> e : ts.descendingSet()) {
+							if (n != 0) {
+								n--;
+								System.out.println(e.get(0).getCargaProvincia() + " con " + e.size() + " casos:");
+								// for(TestSubject t : e)
+								// System.out.println("*"+t.toString());
+							}
+						}
 					} catch (Exception e) {
 						System.out.println("Argumento \"" + args[1] + "\" no valido.");
 					}
-				} else {
 
+				} else {
+					for (List<TestSubject> e : ts.descendingSet()) {
+						System.out.println(e.get(0).getCargaProvincia() + " con " + e.size() + " casos:");
+						// for (TestSubject t : e)
+						// System.out.println("*" + t.toString());
+					}
 				} // Sin parametro
+
 				break;
+
 			case "-p_muertes":
 				if (args.length > 1) { // Parametro enviado
 					try {
@@ -55,21 +73,22 @@ class Main {
 					} catch (Exception e) {
 						System.out.println("Argumento \"" + args[1] + "\" no valido.");
 					}
+
 				} else {
 
 				} // Sin parametro
+
 				break;
+
 			case "-casos_edad":
 				if (args.length > 1) { // Parametro enviado
 					try {
 						int n = Integer.parseInt(args[1]);
 						TreeMap<String, List<TestSubject>> tm = file.readCasesByAge(fileName, n, hayEstad);
-
 						if (hayEstad) {
 							System.out.println("ESTADISTICO");
 							file.getStats().ShowStats();
 						}
-
 						boolean found = false;
 						for (Map.Entry<String, List<TestSubject>> e : tm.entrySet()) {
 							found = true;
@@ -78,7 +97,6 @@ class Main {
 							// ? Ver si imprimimos todo el caso o ni
 							e.getValue().forEach(x -> System.out.println(
 									x.getIdEventoCaso() + ", " + x.getCargaProvinciaId() + ", " + x.getEdad()));
-
 							System.out.println();
 						}
 						if (!found)
@@ -86,29 +104,41 @@ class Main {
 					} catch (Exception e) {
 						System.out.println("Argumento \"" + args[1] + "\" no valido.");
 					}
+
 				} else {
 					System.out.println("Debe pasar una edad.");
 				} // Sin parametro
 				break;
+
 			case "-casos_cui":
 				if (args.length > 1) { // Parametro enviado
 					try {
 						SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd");
 						Date fecha = formatDate.parse(args[1]);
-
 					} catch (ParseException ex) {
 						System.out.println("Argumento \"" + args[1] + "\" no valido.");
 					}
+
 				} else {
 
 				} // Sin parametro
+
 				break;
+
+			default:
+
+				if (hayEstad) { // Solo se pide -estad
+					file.getStats().ShowStats();
+				} else {
+					System.out.println("Parametros no reconocidos");
+				}
+
 		}
-
+		long tf = System.nanoTime();
+		System.out.println();
+		System.out.println("Se tardó: " + (tf - ti) / 1e9);
 	}
-
 }
-
 /*
  * List<String> provincias = Arrays.asList("Buenos Aires", "Córdoba", "Mendoza",
  * "Formosa", "CABA", "Santa Fe", "San Luis", "Entre Ríos", "Tucumán", "Chaco",

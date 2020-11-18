@@ -1,5 +1,6 @@
 
 public class HashTableOpen<TypeKey extends Comparable, TypeValue> {
+
     AvlTree<HashEntry<TypeKey, TypeValue>>[] table;
 
     private int size = 0;
@@ -12,14 +13,20 @@ public class HashTableOpen<TypeKey extends Comparable, TypeValue> {
         }
     }
 
+    /*
+     * private int hashFunc(TypeKey key) { return (int) key % table.length; }
+     */
+
     private int hashFunc(TypeKey key) {
-        return (int) key % table.length;
+
+        return ((int) key % size);
+
     }
 
     public void insert(TypeKey clave, TypeValue value) throws Exception {
         int pos = hashFunc(clave);
-        int i=0;
-        
+        int i = 0;
+
         table[pos].insert(new HashEntry<>(clave, value));
     }
 
