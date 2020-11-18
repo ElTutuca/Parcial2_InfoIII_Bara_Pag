@@ -1,3 +1,4 @@
+package iua.info3.parcial2.covid.classes;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -13,11 +14,13 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Predicate;
 
+import iua.info3.parcial2.covid.structures.HashTableOpen;
+
 /* ToDo: Asegurar casos nulos */
 
-class FileUtil {
+public class FileUtil {
 
-    GlobalStats stats = new GlobalStats();
+    private GlobalStats stats = new GlobalStats();
 
     // ****Lectura de -casos_edad****//
     public TreeMap<String, List<TestSubject>> readCasesByAge(String fileName, int edad, boolean hayEstad) {
@@ -37,10 +40,13 @@ class FileUtil {
                 if (hayEstad)
                     loadStats(values);
 
+                // Condiciones basicas
+                if (!values[20].equalsIgnoreCase("Confirmado")
+                        || (values[2].equals("") ? -1 : Integer.parseInt(values[2])) != edad)
+                    continue;
+
                 // Carga de TestSubjects
                 TestSubject t = loadTestSubject(values);
-                if (!t.getClasificacionResumen().equalsIgnoreCase("Confirmado") || t.getEdad() != edad)
-                    continue;
 
                 if (casesByAge.containsKey(t.getCargaProvincia())) {
                     casesByAge.get(t.getCargaProvincia()).add(t);
@@ -88,10 +94,13 @@ class FileUtil {
                 if (hayEstad)
                     loadStats(values);
 
+                // Condiciones basicas
+                if (!values[20].equalsIgnoreCase("Confirmado"))
+                    continue;
+
                 // Carga de TestSubjects
                 TestSubject t = loadTestSubject(values);
-                if (!t.getClasificacionResumen().equalsIgnoreCase("Confirmado"))
-                    continue;
+
                 try {
                     ht.get(t.getCargaProvinciaId()).add(t);
                 } catch (Exception e) {
@@ -115,7 +124,6 @@ class FileUtil {
                 ts.add(lt1);
             } catch (Exception e) {
                 System.out.println("No hay casos confirmados en la provincia de id : " + idProvince);
-                // e.printStackTrace();
             }
         }
 
@@ -151,10 +159,13 @@ class FileUtil {
                 if (hayEstad)
                     loadStats(values);
 
+                // Condiciones basicas
+                if (!values[14].equalsIgnoreCase("SI"))
+                    continue;
+
                 // Carga de TestSubjects
                 TestSubject t = loadTestSubject(values);
-                if (!t.isFallecido())
-                    continue;
+
                 try {
                     ht.get(t.getCargaProvinciaId()).add(t);
                 } catch (Exception e) {
@@ -199,6 +210,7 @@ class FileUtil {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
             String line;
             line = reader.readLine();
+            SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd");
             while ((line = reader.readLine()) != null) {
                 String[] values = line.split(",");
 
@@ -209,12 +221,13 @@ class FileUtil {
                 if (hayEstad)
                     loadStats(values);
 
+                // Condiciones basicas
+                if (!values[12].equalsIgnoreCase("SI") || values[13].equals("")
+                        || !isFechaBien.test(formatDate.parse(values[13])))
+                    continue;
+
                 // Carga de TestSubjects
                 TestSubject t = loadTestSubject(values);
-                if (t.getFechaCuidadoIntensivo() == null)
-                    continue;
-                if (!t.isCuidadoIntensivo() || !isFechaBien.test(t.getFechaCuidadoIntensivo()))
-                    continue;
 
                 if (casesCui.containsKey(t.getFechaCuidadoIntensivo())) {
                     casesCui.get(t.getFechaCuidadoIntensivo()).add(t);
@@ -242,6 +255,10 @@ class FileUtil {
             line = reader.readLine();
             while ((line = reader.readLine()) != null) {
                 String[] values = line.split(",");
+                for (int i = 0; i < values.length; i++)
+                    if (values[i].length() > 1)
+                        values[i] = values[i].substring(1, values[i].length() - 1);
+
                 loadStats(values);
             }
             reader.close();
@@ -320,14 +337,7 @@ class FileUtil {
 
     // ****Carga de estadísticas****//
     private void loadStats(String[] values) {
-        if (values[2].equals(""))
-            return;
-        values[14] = values[14].substring(1, values[14].length() - 1);
-        values[20] = values[20].substring(1, values[20].length() - 1);
-        values[2] = values[2].substring(1, values[2].length() - 1);
-        values[3] = values[3].substring(1, values[3].length() - 1);
-
-        if (Integer.parseInt(values[2]) > 129)
+        if (values[2].equals("") || Integer.parseInt(values[2]) > 129)
             return;
 
         if ((values[14]).equalsIgnoreCase("SI")) {

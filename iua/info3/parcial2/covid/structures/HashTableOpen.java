@@ -1,3 +1,4 @@
+package iua.info3.parcial2.covid.structures;
 
 public class HashTableOpen<TypeKey extends Comparable, TypeValue> {
 

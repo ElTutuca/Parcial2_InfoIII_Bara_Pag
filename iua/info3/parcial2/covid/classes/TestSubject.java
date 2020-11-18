@@ -1,3 +1,5 @@
+package iua.info3.parcial2.covid.classes;
+
 import java.util.Date;
 
 public class TestSubject {

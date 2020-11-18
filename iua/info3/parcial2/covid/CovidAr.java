@@ -1,3 +1,5 @@
+package iua.info3.parcial2.covid;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -7,9 +9,10 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-// TODO: Si pinta arreglar la sig. situacion // covid19.jar -p_casos -estad 5
-// covid19.jar -p_casos 5 6
-class Main {
+import iua.info3.parcial2.covid.classes.FileUtil;
+import iua.info3.parcial2.covid.classes.TestSubject;
+
+class CovidAr {
 
 	public static void main(String[] args) {
 
@@ -26,13 +29,10 @@ class Main {
 		}
 
 		boolean hayDir = args[args.length - 1].contains(".csv");
-
 		if (hayDir) {
 			fileName = args[args.length - 1];// Nombre del archivo
-			Arrays.stream(args).filter(arg -> !arg.equals(args[args.length - 1]));
-		}
-
-		else {
+			args = Arrays.stream(args).filter(arg -> !arg.contains(".csv")).toArray(String[]::new);
+		} else {
 			System.out.println("No se ingresó el documento de lectura");
 			return;
 		}
@@ -40,8 +40,8 @@ class Main {
 		// *****Chequeo de -estad*****//
 
 		boolean hayEstad = Arrays.stream(args).anyMatch(arg -> arg.equals("-estad"));
-		if (hayEstad)
-			Arrays.stream(args).filter(arg -> !arg.equalsIgnoreCase("-estad"));
+		if (hayEstad && args.length > 1)
+			args = Arrays.stream(args).filter(arg -> !arg.equalsIgnoreCase("-estad")).toArray(String[]::new);
 
 		// *****Chequeo de el resto de comandos*****//
 		switch (args[0]) {
@@ -189,52 +189,3 @@ class Main {
 		System.out.println("Se tardó: " + (tf - ti) / 1e9);
 	}
 }
-
-/*
- * List<String> provincias = Arrays.asList("Buenos Aires", "Córdoba", "Mendoza",
- * "Formosa", "CABA", "Santa Fe", "San Luis", "Entre Ríos", "Tucumán", "Chaco",
- * "Corrientes", "Río Negro", "Santa Cruz", "Neuquén", "San Juan", "La Pampa",
- * "Chubut", "Jujuy", "Santiago del Estero", "Catamarca", "Tierra del Fuego",
- * "Misiones", "La Rioja", "Salta");
- * 
- * int size = 127; int[] hashes = new int[provincias.size()];
- * 
- * //HASH cuadratico
- * 
- * for (int i = 0; i < provincias.size(); i++) { hashes[i] =
- * (idProvincias.get(i) + i * i) % size; System.out.println(provincias.get(i) +
- * " (" + idProvincias.get(i) + ") : " + hashes[i]); }
- * 
- * System.out.println();
- * 
- * // Mostrar colisiones for (int i = 0; i < provincias.size(); i++) { for (int
- * j = 0; j < hashes.length && i != j; j++) { if (hashes[i] == hashes[j])
- * System.out.println(provincias.get(i) + " colisiono con " +
- * provincias.get(j)); } }
- */
-
-/*
- * ProvinciaCatga : idProvinciaCarga
- * 
- * Buenos Aires: 6 Córdoba: 14 Mendoza: 50 Formosa: 34 CABA: 2 Santa Fe: 82 San
- * Luis: 74 Entre Ríos: 30 Tucumán: 90 Chaco: 22 Corrientes: 18 Río Negro: 62
- * Santa Cruz: 78 Neuquén: 58 San Juan: 70 La Pampa: 42 Chubut: 26 Jujuy: 38
- * Santiago del Estero: 86 Catamarca: 10 Tierra del Fuego: 94 Misiones: 54 La
- * Rioja: 46 Salta: 66
- * 
- */
-
-// HASH Lineal
-/*
- * for (int i = 0; i < provincias.size(); i++) { hashes[i] =
- * ((idProvincias.get(i) + i)) % size; System.out.println(provincias.get(i) +
- * " (" + idProvincias.get(i) + ") : " + hashes[i]); }
- */
-
-// HASH cuadratico doble
-/*
- * for (int i = 0; i < provincias.size(); i++) { hashes[i] =
- * (((idProvincias.get(i) + i * i) % size) + i * i) % size;
- * System.out.println(provincias.get(i) + " (" + idProvincias.get(i) + ") : " +
- * hashes[i]); }
- */

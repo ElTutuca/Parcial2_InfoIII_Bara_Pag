@@ -1,3 +1,5 @@
+package iua.info3.parcial2.covid.classes;
+
 import java.util.Arrays;
 
 public class GlobalStats {
@@ -64,7 +66,6 @@ public class GlobalStats {
         for (int i = 0; i < infectedAge.length; i++)
             System.out.println("Cantidad de fallecidos en el rango de " + i * 10 + " hasta " + (i + 1) * 10 + ": "
                     + deceasedAge[i]);
-
+        System.out.println();
     }
-
 }
