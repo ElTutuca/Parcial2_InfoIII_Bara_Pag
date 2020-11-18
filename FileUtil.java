@@ -309,10 +309,15 @@ class FileUtil {
 
     // ****Carga de estadísticas****//
     private void loadStats(String[] values) {
+        if (values[2].equals(""))
+            return;
         values[14] = values[14].substring(1, values[14].length() - 1);
         values[20] = values[20].substring(1, values[20].length() - 1);
         values[2] = values[2].substring(1, values[2].length() - 1);
         values[3] = values[3].substring(1, values[3].length() - 1);
+
+        if (Integer.parseInt(values[2]) > 129)
+            return;
 
         if ((values[14]).equalsIgnoreCase("SI")) {
             stats.increaseDeceased();

@@ -5,8 +5,8 @@ public class GlobalStats {
     private int samples = 0;
     private int infected = 0;
     private int deceased = 0;
-    private int[] infectedAge = new int[11];
-    private int[] deceasedAge = new int[11];
+    private int[] infectedAge = new int[13];
+    private int[] deceasedAge = new int[13];
 
     GlobalStats() {
         Arrays.fill(infectedAge, 0);

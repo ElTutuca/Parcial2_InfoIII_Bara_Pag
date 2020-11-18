@@ -167,7 +167,6 @@ class Main {
 
 				if (hayEstad) { // Solo se pide -estad
 					file.readStats(fileName).ShowStats();
-
 				} else {
 					System.out.println("Parametros no reconocidos");
 				}
