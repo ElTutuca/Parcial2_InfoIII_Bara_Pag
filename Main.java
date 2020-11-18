@@ -67,15 +67,35 @@ class Main {
 				break;
 
 			case "-p_muertes":
+				TreeSet<List<TestSubject>> tsd = file.readDeacesedByProvince(fileName, hayEstad);
+
+				if (hayEstad) {
+					System.out.println("ESTADISTICO");
+					file.getStats().ShowStats();
+				}
+
 				if (args.length > 1) { // Parametro enviado
 					try {
 						int n = Integer.parseInt(args[1]);
+						for (List<TestSubject> e : tsd.descendingSet()) {
+							if (n != 0) {
+								n--;
+								System.out.println(e.get(0).getCargaProvincia() + " con " + e.size() + " fallecidos:");
+								// for(TestSubject t : e)
+								// System.out.println("*"+t.toString());
+							}
+						}
+
 					} catch (Exception e) {
 						System.out.println("Argumento \"" + args[1] + "\" no valido.");
 					}
 
 				} else {
-
+					for (List<TestSubject> e : tsd.descendingSet()) {
+						System.out.println(e.get(0).getCargaProvincia() + " con " + e.size() + " fallecidos:");
+						// for (TestSubject t : e)
+						// System.out.println("*" + t.toString());
+					}
 				} // Sin parametro
 
 				break;
@@ -146,7 +166,8 @@ class Main {
 			default:
 
 				if (hayEstad) { // Solo se pide -estad
-					file.getStats().ShowStats();
+					file.readStats(fileName).ShowStats();
+
 				} else {
 					System.out.println("Parametros no reconocidos");
 				}
@@ -157,6 +178,7 @@ class Main {
 		System.out.println("Se tardó: " + (tf - ti) / 1e9);
 	}
 }
+
 /*
  * List<String> provincias = Arrays.asList("Buenos Aires", "Córdoba", "Mendoza",
  * "Formosa", "CABA", "Santa Fe", "San Luis", "Entre Ríos", "Tucumán", "Chaco",

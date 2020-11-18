@@ -118,6 +118,68 @@ class FileUtil {
 
     }
 
+    // ****Lectura de -p_muertes****//
+    public TreeSet<List<TestSubject>> readDeacesedByProvince(String fileName, boolean hayEstad) {
+        List<Integer> listIdProvince = Arrays.asList(6, 14, 50, 34, 2, 82, 74, 30, 90, 22, 18, 62, 78, 58, 70, 42, 26,
+                38, 86, 10, 94, 54, 46, 66);
+
+        TreeSet<List<TestSubject>> ts = new TreeSet<List<TestSubject>>(new Comparator<List<TestSubject>>() {
+            @Override
+            public int compare(List<TestSubject> arg0, List<TestSubject> arg1) {
+                return arg0.size() - arg1.size();
+            }
+        });
+
+        HashTableOpen<Integer, List<TestSubject>> ht = new HashTableOpen<>(27);
+
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(fileName));
+            String line;
+            line = reader.readLine();
+            while ((line = reader.readLine()) != null) {
+                String[] values = line.split(",");
+
+                for (int i = 0; i < values.length; i++)
+                    if (values[i].length() > 1)
+                        values[i] = values[i].substring(1, values[i].length() - 1);
+
+                if (hayEstad)
+                    loadStats(values);
+
+                // Carga de TestSubjects
+                TestSubject t = loadTestSubject(values);
+                if (!t.isFallecido())
+                    continue;
+                try {
+                    ht.get(t.getCargaProvinciaId()).add(t);
+                } catch (Exception e) {
+                    List<TestSubject> lt = new ArrayList<>();
+                    lt.add(t);
+                    ht.insert(t.getCargaProvinciaId(), lt);
+                }
+
+            }
+            reader.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        for (Integer idProvince : listIdProvince) {
+            try {
+                List<TestSubject> lt1;
+                lt1 = ht.get(idProvince);
+                ts.add(lt1);
+            } catch (Exception e) {
+                System.out.println("No hay casos confirmados en la provincia de id : " + idProvince);
+                // e.printStackTrace();
+            }
+        }
+
+        return ts;
+
+    }
+
+    // ****Lectura de -casos_cui****//
     public TreeMap<Date, List<TestSubject>> readCasesCui(String fileName, Date fecha, boolean hayEstad) {
         TreeMap<Date, List<TestSubject>> casesCui = new TreeMap<>();
         Predicate<Date> isFechaBien;
