@@ -323,6 +323,11 @@ public class FileUtil {
 
         try {
             t.setFechaInternacion(formatDate.parse(values[11]));
+        } catch (Exception e) {
+            // System.out.println("Invalid Dates");
+        }
+
+        try {
             t.setFechaCuidadoIntensivo(formatDate.parse(values[13]));
         } catch (ParseException ex) {
             // System.out.println("Invalid Dates");

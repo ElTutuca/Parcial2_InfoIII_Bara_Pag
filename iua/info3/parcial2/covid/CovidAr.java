@@ -61,9 +61,9 @@ class CovidAr {
 						for (List<TestSubject> e : ts.descendingSet()) {
 							if (n != 0) {
 								n--;
-								System.out.println(e.get(0).getCargaProvincia() + " con " + e.size() + " casos:");
-								// e.forEach(t -> System.out.println(t));
-								// System.out.println();
+								System.out.println(e.get(0).getCargaProvincia() + " con " + e.size() + " casos.");
+								e.forEach(t -> System.out.println(t));
+								System.out.println();
 							}
 						}
 					} catch (Exception e) {
@@ -71,9 +71,9 @@ class CovidAr {
 					}
 				} else { // Sin parametro
 					for (List<TestSubject> e : ts.descendingSet()) {
-						System.out.println(e.get(0).getCargaProvincia() + " con " + e.size() + " casos:");
-						// e.forEach(t -> System.out.println(t));
-						// System.out.println();
+						System.out.println(e.get(0).getCargaProvincia() + " con " + e.size() + " casos.");
+						e.forEach(t -> System.out.println(t));
+						System.out.println();
 					}
 				}
 				break;
@@ -94,9 +94,9 @@ class CovidAr {
 						for (List<TestSubject> e : tsd.descendingSet()) {
 							if (n != 0) {
 								n--;
-								System.out.println(e.get(0).getCargaProvincia() + " con " + e.size() + " fallecidos:");
-								// e.forEach(t -> System.out.println(t));
-								// System.out.println();
+								System.out.println(e.get(0).getCargaProvincia() + " con " + e.size() + " fallecidos.");
+								e.forEach(t -> System.out.println(t));
+								System.out.println();
 							}
 						}
 					} catch (Exception e) {
@@ -104,9 +104,9 @@ class CovidAr {
 					}
 				} else { // Sin parametro
 					for (List<TestSubject> e : tsd.descendingSet()) {
-						System.out.println(e.get(0).getCargaProvincia() + " con " + e.size() + " fallecidos:");
-						// e.forEach(t -> System.out.println(t));
-						// System.out.println();
+						System.out.println(e.get(0).getCargaProvincia() + " con " + e.size() + " fallecidos.");
+						e.forEach(t -> System.out.println(t));
+						System.out.println();
 					}
 				}
 				break;
