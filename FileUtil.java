@@ -1,5 +1,6 @@
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -51,6 +52,8 @@ class FileUtil {
                 }
             }
             reader.close();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("No se encontró el documento");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -99,6 +102,8 @@ class FileUtil {
 
             }
             reader.close();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("No se encontró el documento");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -160,6 +165,8 @@ class FileUtil {
 
             }
             reader.close();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("No se encontró el documento");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -219,6 +226,8 @@ class FileUtil {
                 }
             }
             reader.close();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("No se encontró el documento");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -236,6 +245,8 @@ class FileUtil {
                 loadStats(values);
             }
             reader.close();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("No se encontró el documento");
         } catch (Exception e) {
             e.printStackTrace();
         }

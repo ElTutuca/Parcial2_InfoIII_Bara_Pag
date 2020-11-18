@@ -15,13 +15,25 @@ class Main {
 
 		long ti = System.nanoTime();
 		FileUtil file = new FileUtil();
-		String fileName = "Covid19Casos.csv";// Nombre del archivo
+		String fileName = "";// Nombre del archivo
 
 		if (args.length == 0) {
 			System.out.println("Sin argumentos");
 			return;
-		} else if (args.length > 3) {
+		} else if (args.length > 4) {
 			System.out.println("Exceso de argumentos");
+			return;
+		}
+
+		boolean hayDir = args[args.length - 1].contains(".csv");
+
+		if (hayDir) {
+			fileName = args[args.length - 1];// Nombre del archivo
+			Arrays.stream(args).filter(arg -> !arg.equals(args[args.length - 1]));
+		}
+
+		else {
+			System.out.println("No se ingresó el documento de lectura");
 			return;
 		}
 
