@@ -30,9 +30,7 @@ public class TestSubject {
     private int residenciaDepartamentoId;
     private Date ultimaActualizacion; // Fecha
 
-    TestSubject() {
-    }
-    // ********* INICIO SETTERS
+    // * SETTERS
 
     public void setIdEventoCaso(int idEventoCaso) {
         this.idEventoCaso = idEventoCaso;
@@ -134,7 +132,7 @@ public class TestSubject {
         this.ultimaActualizacion = ultimaActualizacion;
     }
 
-    // ********* INICIO GETTERS *************
+    // * GETTERS
 
     public int getIdEventoCaso() {
         return idEventoCaso;

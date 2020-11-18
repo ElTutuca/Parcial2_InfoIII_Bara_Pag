@@ -22,7 +22,7 @@ public class FileUtil {
 
     private GlobalStats stats = new GlobalStats();
 
-    // ****Lectura de -casos_edad****//
+    // * Lectura de -casos_edad
     public TreeMap<String, List<TestSubject>> readCasesByAge(String fileName, int edad, boolean hayEstad) {
         TreeMap<String, List<TestSubject>> casesByAge = new TreeMap<>();
 
@@ -33,6 +33,7 @@ public class FileUtil {
             while ((line = reader.readLine()) != null) {
                 String[] values = line.split(",");
 
+                // Quita las comillas de los strings en values
                 for (int i = 0; i < values.length; i++)
                     if (values[i].length() > 1)
                         values[i] = values[i].substring(1, values[i].length() - 1);
@@ -40,16 +41,21 @@ public class FileUtil {
                 if (hayEstad)
                     loadStats(values);
 
-                // Condiciones basicas
-                if (!values[20].equalsIgnoreCase("Confirmado")
-                        || (values[2].equals("") ? -1 : Integer.parseInt(values[2])) != edad)
+                // Si la clasificacion no es "confirmado" || la edad esta vacia || la edad != a
+                // la edad pedida, saltear el caso
+                if (!values[20].equalsIgnoreCase("Confirmado") || values[2].equals("")
+                        || Integer.parseInt(values[2]) != edad)
                     continue;
 
                 // Carga de TestSubjects
                 TestSubject t = loadTestSubject(values);
 
+                // Si ya existe la entrada de esa provincia, solo agregar t a la lista
                 if (casesByAge.containsKey(t.getCargaProvincia())) {
                     casesByAge.get(t.getCargaProvincia()).add(t);
+
+                    // Si no existe la entrada de esa provincia, crear la lista y agregar t a la
+                    // lista
                 } else {
                     List<TestSubject> ts = new ArrayList<>();
                     ts.add(t);
@@ -66,11 +72,13 @@ public class FileUtil {
         return casesByAge;
     }
 
-    // ****Lectura de -p_casos****//
+    // * Lectura de -p_casos
     public TreeSet<List<TestSubject>> readCasesByProvince(String fileName, boolean hayEstad) {
+        // Lista para recorrer la tabla hash
         List<Integer> listIdProvince = Arrays.asList(6, 14, 50, 34, 2, 82, 74, 30, 90, 22, 18, 62, 78, 58, 70, 42, 26,
                 38, 86, 10, 94, 54, 46, 66);
 
+        // Arbol de listas, donde el criterio de comparacion es el largo de la lista
         TreeSet<List<TestSubject>> ts = new TreeSet<List<TestSubject>>(new Comparator<List<TestSubject>>() {
             @Override
             public int compare(List<TestSubject> arg0, List<TestSubject> arg1) {
@@ -78,6 +86,7 @@ public class FileUtil {
             }
         });
 
+        // Tabla hash de <IdProvincia, lista de casos>
         HashTableOpen<Integer, List<TestSubject>> ht = new HashTableOpen<>(27);
 
         try {
@@ -87,6 +96,7 @@ public class FileUtil {
             while ((line = reader.readLine()) != null) {
                 String[] values = line.split(",");
 
+                // Quita las comillas de los strings en values
                 for (int i = 0; i < values.length; i++)
                     if (values[i].length() > 1)
                         values[i] = values[i].substring(1, values[i].length() - 1);
@@ -94,21 +104,23 @@ public class FileUtil {
                 if (hayEstad)
                     loadStats(values);
 
-                // Condiciones basicas
+                // Si el caso no es confirmado, saltar caso
                 if (!values[20].equalsIgnoreCase("Confirmado"))
                     continue;
 
                 // Carga de TestSubjects
                 TestSubject t = loadTestSubject(values);
 
+                // Intenta cargar el t en la entrada del idProvincia
                 try {
                     ht.get(t.getCargaProvinciaId()).add(t);
                 } catch (Exception e) {
+                    // Si no existe la entrada con idProvincia, la crea
                     List<TestSubject> lt = new ArrayList<>();
                     lt.add(t);
+
                     ht.insert(t.getCargaProvinciaId(), lt);
                 }
-
             }
             reader.close();
         } catch (FileNotFoundException e) {
@@ -117,6 +129,7 @@ public class FileUtil {
             e.printStackTrace();
         }
 
+        // Llena el arbol con las listas del hashtable
         for (Integer idProvince : listIdProvince) {
             try {
                 List<TestSubject> lt1;
@@ -126,16 +139,16 @@ public class FileUtil {
                 System.out.println("No hay casos confirmados en la provincia de id : " + idProvince);
             }
         }
-
         return ts;
-
     }
 
-    // ****Lectura de -p_muertes****//
+    // * Lectura de -p_muertes
     public TreeSet<List<TestSubject>> readDeacesedByProvince(String fileName, boolean hayEstad) {
+        // Lista para recorrer la tabla hash
         List<Integer> listIdProvince = Arrays.asList(6, 14, 50, 34, 2, 82, 74, 30, 90, 22, 18, 62, 78, 58, 70, 42, 26,
                 38, 86, 10, 94, 54, 46, 66);
 
+        // Arbol de listas, donde el criterio de comparacion es el largo de la lista
         TreeSet<List<TestSubject>> ts = new TreeSet<List<TestSubject>>(new Comparator<List<TestSubject>>() {
             @Override
             public int compare(List<TestSubject> arg0, List<TestSubject> arg1) {
@@ -143,6 +156,7 @@ public class FileUtil {
             }
         });
 
+        // Tabla hash de <IdProvincia, lista de casos>
         HashTableOpen<Integer, List<TestSubject>> ht = new HashTableOpen<>(27);
 
         try {
@@ -152,6 +166,7 @@ public class FileUtil {
             while ((line = reader.readLine()) != null) {
                 String[] values = line.split(",");
 
+                // Quita las comillas de los strings en values
                 for (int i = 0; i < values.length; i++)
                     if (values[i].length() > 1)
                         values[i] = values[i].substring(1, values[i].length() - 1);
@@ -159,16 +174,18 @@ public class FileUtil {
                 if (hayEstad)
                     loadStats(values);
 
-                // Condiciones basicas
+                // Si no esta fallecido, saltear caso
                 if (!values[14].equalsIgnoreCase("SI"))
                     continue;
 
                 // Carga de TestSubjects
                 TestSubject t = loadTestSubject(values);
 
+                // Intenta cargar el t en la entrada del idProvincia
                 try {
                     ht.get(t.getCargaProvinciaId()).add(t);
                 } catch (Exception e) {
+                    // Si no existe la entrada con idProvincia, la crea
                     List<TestSubject> lt = new ArrayList<>();
                     lt.add(t);
                     ht.insert(t.getCargaProvinciaId(), lt);
@@ -182,6 +199,7 @@ public class FileUtil {
             e.printStackTrace();
         }
 
+        // Llena el arbol con las listas del hashtable
         for (Integer idProvince : listIdProvince) {
             try {
                 List<TestSubject> lt1;
@@ -192,14 +210,15 @@ public class FileUtil {
                 // e.printStackTrace();
             }
         }
-
         return ts;
-
     }
 
-    // ****Lectura de -casos_cui****//
+    // * Lectura de -casos_cui
     public TreeMap<Date, List<TestSubject>> readCasesCui(String fileName, Date fecha, boolean hayEstad) {
         TreeMap<Date, List<TestSubject>> casesCui = new TreeMap<>();
+
+        // isFechaBien va a ver si la fecha de los TestSubject es >= a fecha, o si fecha
+        // es null entonces no filtra por fecha
         Predicate<Date> isFechaBien;
         if (fecha != null)
             isFechaBien = x -> x.compareTo(fecha) >= 0;
@@ -214,6 +233,7 @@ public class FileUtil {
             while ((line = reader.readLine()) != null) {
                 String[] values = line.split(",");
 
+                // Quita las comillas de los strings en values
                 for (int i = 0; i < values.length; i++)
                     if (values[i].length() > 1)
                         values[i] = values[i].substring(1, values[i].length() - 1);
@@ -221,7 +241,8 @@ public class FileUtil {
                 if (hayEstad)
                     loadStats(values);
 
-                // Condiciones basicas
+                // Si no estuvo en cuidado intensivo || la fecha esta vacia || no cumple con el
+                // requisito de la fecha, saltear el caso
                 if (!values[12].equalsIgnoreCase("SI") || values[13].equals("")
                         || !isFechaBien.test(formatDate.parse(values[13])))
                     continue;
@@ -229,9 +250,11 @@ public class FileUtil {
                 // Carga de TestSubjects
                 TestSubject t = loadTestSubject(values);
 
+                // Si ya existe la entrada de esa fecha, solo agregar t a la lista
                 if (casesCui.containsKey(t.getFechaCuidadoIntensivo())) {
                     casesCui.get(t.getFechaCuidadoIntensivo()).add(t);
                 } else {
+                    // Si no existe la entrada de esa fecha, crear la lista y agregar t a la lista
                     List<TestSubject> ts = new ArrayList<>();
                     ts.add(t);
 
@@ -247,7 +270,7 @@ public class FileUtil {
         return casesCui;
     }
 
-    // ****Lectura de solo estadísticas****//
+    // * Lectura de solo estadísticas
     public GlobalStats readStats(String fileName) {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
@@ -255,6 +278,8 @@ public class FileUtil {
             line = reader.readLine();
             while ((line = reader.readLine()) != null) {
                 String[] values = line.split(",");
+
+                // Quita las comillas de los strings en values
                 for (int i = 0; i < values.length; i++)
                     if (values[i].length() > 1)
                         values[i] = values[i].substring(1, values[i].length() - 1);
@@ -270,7 +295,7 @@ public class FileUtil {
         return stats;
     }
 
-    // ****Carga de TestSubjects****//
+    // * Carga de TestSubjects
     private static TestSubject loadTestSubject(String[] values) {
         SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -335,8 +360,9 @@ public class FileUtil {
         return t;
     }
 
-    // ****Carga de estadísticas****//
+    // * Carga de estadísticas
     private void loadStats(String[] values) {
+        // Si no hay edad || la edad es > 129, no cargar
         if (values[2].equals("") || Integer.parseInt(values[2]) > 129)
             return;
 
@@ -361,7 +387,7 @@ public class FileUtil {
         stats.increaseSamples();
     }
 
-    // ****Retorno de estadísticas****//
+    // * Retorno de estadísticas
     public GlobalStats getStats() {
         return stats;
     }

@@ -18,7 +18,7 @@ class CovidAr {
 
 		long ti = System.nanoTime();
 		FileUtil file = new FileUtil();
-		String fileName = "";// Nombre del archivo
+		String fileName = "";
 
 		if (args.length == 0) {
 			System.out.println("Sin argumentos");
@@ -28,6 +28,7 @@ class CovidAr {
 			return;
 		}
 
+		// Chequeo de directorio
 		boolean hayDir = args[args.length - 1].contains(".csv");
 		if (hayDir) {
 			fileName = args[args.length - 1];// Nombre del archivo
@@ -37,15 +38,15 @@ class CovidAr {
 			return;
 		}
 
-		// *****Chequeo de -estad*****//
-
+		// Chequeo de -estad
 		boolean hayEstad = Arrays.stream(args).anyMatch(arg -> arg.equals("-estad"));
 		if (hayEstad && args.length > 1)
 			args = Arrays.stream(args).filter(arg -> !arg.equalsIgnoreCase("-estad")).toArray(String[]::new);
 
-		// *****Chequeo de el resto de comandos*****//
+		// Selector del siguiente argumento
 		switch (args[0]) {
 			case "-p_casos":
+				// Lectura de contagios por provincia
 				TreeSet<List<TestSubject>> ts = file.readCasesByProvince(fileName, hayEstad);
 
 				if (hayEstad) {
@@ -53,32 +54,32 @@ class CovidAr {
 					file.getStats().ShowStats();
 				}
 
-				if (args.length > 1) { // Parametro enviado
+				// Parametro enviado
+				if (args.length > 1) {
 					try {
 						int n = Integer.parseInt(args[1]);
 						for (List<TestSubject> e : ts.descendingSet()) {
 							if (n != 0) {
 								n--;
 								System.out.println(e.get(0).getCargaProvincia() + " con " + e.size() + " casos:");
-								// for(TestSubject t : e)
-								// System.out.println("*"+t.toString());
+								// e.forEach(t -> System.out.println(t));
+								// System.out.println();
 							}
 						}
 					} catch (Exception e) {
 						System.out.println("Argumento \"" + args[1] + "\" no valido.");
 					}
-
-				} else {
+				} else { // Sin parametro
 					for (List<TestSubject> e : ts.descendingSet()) {
 						System.out.println(e.get(0).getCargaProvincia() + " con " + e.size() + " casos:");
-						// for (TestSubject t : e)
-						// System.out.println("*" + t.toString());
+						// e.forEach(t -> System.out.println(t));
+						// System.out.println();
 					}
-				} // Sin parametro
-
+				}
 				break;
 
 			case "-p_muertes":
+				// Lectura de muertes por provincia
 				TreeSet<List<TestSubject>> tsd = file.readDeacesedByProvince(fileName, hayEstad);
 
 				if (hayEstad) {
@@ -86,49 +87,49 @@ class CovidAr {
 					file.getStats().ShowStats();
 				}
 
-				if (args.length > 1) { // Parametro enviado
+				// Parametro enviado
+				if (args.length > 1) {
 					try {
 						int n = Integer.parseInt(args[1]);
 						for (List<TestSubject> e : tsd.descendingSet()) {
 							if (n != 0) {
 								n--;
 								System.out.println(e.get(0).getCargaProvincia() + " con " + e.size() + " fallecidos:");
-								// for(TestSubject t : e)
-								// System.out.println("*"+t.toString());
+								// e.forEach(t -> System.out.println(t));
+								// System.out.println();
 							}
 						}
-
 					} catch (Exception e) {
 						System.out.println("Argumento \"" + args[1] + "\" no valido.");
 					}
-
-				} else {
+				} else { // Sin parametro
 					for (List<TestSubject> e : tsd.descendingSet()) {
 						System.out.println(e.get(0).getCargaProvincia() + " con " + e.size() + " fallecidos:");
-						// for (TestSubject t : e)
-						// System.out.println("*" + t.toString());
+						// e.forEach(t -> System.out.println(t));
+						// System.out.println();
 					}
-				} // Sin parametro
-
+				}
 				break;
 
 			case "-casos_edad":
-				if (args.length > 1) { // Parametro enviado
+				// Parametro enviado
+				if (args.length > 1) {
 					try {
 						int n = Integer.parseInt(args[1]);
+						// Lectura de casos contagiados con la edad especificada
 						TreeMap<String, List<TestSubject>> tm = file.readCasesByAge(fileName, n, hayEstad);
+
 						if (hayEstad) {
 							System.out.println("ESTADISTICO");
 							file.getStats().ShowStats();
 						}
+
 						boolean found = false;
 						for (Map.Entry<String, List<TestSubject>> e : tm.entrySet()) {
 							found = true;
 							System.out.println(e.getKey());
 
-							// ? Ver si imprimimos todo el caso o ni
-							e.getValue().forEach(x -> System.out.println(
-									x.getIdEventoCaso() + ", " + x.getCargaProvinciaId() + ", " + x.getEdad()));
+							e.getValue().forEach(t -> System.out.println(t));
 							System.out.println();
 						}
 						if (!found)
@@ -137,9 +138,9 @@ class CovidAr {
 						System.out.println("Argumento \"" + args[1] + "\" no valido.");
 					}
 
-				} else {
+				} else { // Sin parametro
 					System.out.println("Debe pasar una edad.");
-				} // Sin parametro
+				}
 				break;
 
 			case "-casos_cui":
@@ -149,6 +150,7 @@ class CovidAr {
 					if (args.length > 1)
 						fecha = formatDate.parse(args[1]);
 
+					// Lectura de casos en cuidados intensivos por fecha
 					TreeMap<Date, List<TestSubject>> tm = file.readCasesCui(fileName, fecha, hayEstad);
 
 					if (hayEstad) {
@@ -161,29 +163,24 @@ class CovidAr {
 						found = true;
 						System.out.println(formatDate.format(e.getKey()));
 
-						// ? Ver si imprimimos todo el caso o ni
-						e.getValue().forEach(x -> System.out
-								.println(formatDate.format(x.getFechaCuidadoIntensivo()) + ", " + x.getIdEventoCaso()));
-
+						e.getValue().forEach(t -> System.out.println(t));
 						System.out.println();
 					}
 					if (!found)
 						System.out.println("No se encontro casos con la fecha \"" + fecha + "\"");
-
 				} catch (ParseException ex) {
 					System.out.println("Argumento \"" + args[1] + "\" no valido.");
 				}
 				break;
 
+			// Solo se pide -estad
 			default:
-
-				if (hayEstad) { // Solo se pide -estad
+				if (hayEstad)
 					file.readStats(fileName).ShowStats();
-				} else {
+				else
 					System.out.println("Parametros no reconocidos");
-				}
-
 		}
+
 		long tf = System.nanoTime();
 		System.out.println();
 		System.out.println("Se tardó: " + (tf - ti) / 1e9);

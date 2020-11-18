@@ -21,8 +21,7 @@ public class GlobalStats {
         this.samples = samples;
         this.infectedAge = infectedAge;
         this.deceasedAge = deceasedAge;
-
-    } // ***************************Builder
+    }
 
     public int SampleInfectedPercent() {
         return (infected * 100) / samples;
